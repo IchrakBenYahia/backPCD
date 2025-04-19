@@ -1,41 +1,29 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
 const cors = require('cors');
+const bodyParser = require('body-parser');
+
 const app = express();
+const port = process.env.PORT || 3000;
 
-// 🔧 Change le port si nécessaire
-const port = 3000;
-
-// 🔐 Remplace ceci avec le chemin vers ta clé privée téléchargée
+// 🔐 Initialisation Firebase
 const serviceAccount = require('./serviceAccountKey.json');
-
-// 🔥 Initialisation Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-const db = admin.firestore();
-
-// 🌍 Active CORS pour permettre l'accès externe
+// 🌍 Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Route d'update
-app.post('/api/poubelle/update', async (req, res) => {
-  console.log('Requête reçue:', req.body);
-  const { id, pleine } = req.body;
+// 📦 Import des routes
+const poubelleRoutes = require('./routes/poubelleRoutes');
 
-  try {
-    await db.collection('poubelles').doc(id).update({ pleine });
-    res.status(200).send('Mise à jour réussie');
-  } catch (error) {
-    console.error('Erreur Firestore :', error);
-    res.status(500).send('Erreur lors de la mise à jour');
-  }
-});
+// 🛣️ Utilisation des routes
+app.use('/poubelles', poubelleRoutes); // ex: GET /poubelles, POST /poubelles
+app.use('/api/poubelle', poubelleRoutes); // pour route spéciale
 
-// 📡 Écoute sur toutes les interfaces (important !)
+// 🚀 Démarrage du serveur
 app.listen(port, '0.0.0.0', () => {
   console.log(`Serveur en écoute sur http://localhost:${port}`);
 });

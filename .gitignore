@@ -1,0 +1,26 @@
+# Node.js dependencies
+node_modules/
+
+# Firebase credentials or any sensitive keys
+serviceAccountKey.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment files
+.env
+
+# OS-specific
+.DS_Store
+Thumbs.db
