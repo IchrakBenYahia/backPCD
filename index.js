@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // 🔐 Remplace ceci avec le chemin vers ta clé privée téléchargée
-const serviceAccount = require('./config/serviceAccountKey.json');
+const serviceAccount = require('./serviceAccountKey.json');
 
 // 🔥 Initialisation Firebase
 admin.initializeApp({
