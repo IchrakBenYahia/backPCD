@@ -80,10 +80,34 @@ const updatePleinePoubelle = async (id, pleine) => {
   
 };
 
+async function getPoubellesPleines() {
+  const snapshot = await db.collection('poubelles').where('pleine', '==', true).get();
+ 
+  if (snapshot.empty) {
+    return [];
+  }
+
+
+  const poubelles = [];
+  snapshot.forEach(doc => {
+    poubelles.push({
+      id: doc.id,
+      adresse: doc.data().adresse,
+      longitude: doc.data().longitude,
+      latitude: doc.data().latitude,
+    });
+  });
+
+
+  return poubelles;
+}
+
+
 module.exports = {
   getAllPoubelles,
   addPoubelle,
   updatePoubelle,
   deletePoubelle,
   updatePleinePoubelle,
+  getPoubellesPleines,
 };
