@@ -21,12 +21,69 @@ const updatePoubelle = async (id, data) => {
 };
 
 const deletePoubelle = async (id) => {
-  return await db.collection('poubelles').doc(id).delete();
+  try {
+    // Supprimer la poubelle
+    await db.collection('poubelles').doc(id).delete();
+
+    // Trouver toutes les alertes liées à cette poubelle
+    const alertesSnapshot = await db.collection('alertes')
+      .where('poubelle', '==', id)
+      .get();
+
+    // Supprimer toutes les alertes associées
+    const deletePromises = alertesSnapshot.docs.map(doc => 
+      db.collection('alertes').doc(doc.id).delete()
+    );
+
+    await Promise.all(deletePromises);
+
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la poubelle et de ses alertes:', error);
+  }
+};
+
+const updatePleinePoubelle = async (id, pleine) => {
+
+  if (!id || typeof pleine !== 'boolean') {
+    return console.error('ID ou pleine invalide');
+  }
+
+  try {
+    const updateData = {
+      pleine,
+      dateDePleine: pleine ? new Date() : null,
+    };
+
+    await db.collection('poubelles').doc(id).update(updateData);
+    //console.log(`Poubelle ${id} mise à jour: pleine = ${pleine}`);
+
+    // Si la poubelle devient vide, vérifier les alertes
+    if (!pleine) {
+      const alertesSnapshot = await db.collection('alertes')
+        .where('poubelle', '==', id)
+        .where('traitee', '==', false)
+        .get();
+
+      if (!alertesSnapshot.empty) {
+        const updatePromises = alertesSnapshot.docs.map((alerteDoc) =>
+          db.collection('alertes').doc(alerteDoc.id).update({ traitee: true })
+        );
+        await Promise.all(updatePromises);
+        //console.log(`Alertes traitées pour la poubelle ${id}`);
+      }
+    }
+
+    console.error('Mise à jour réussie');
+  } catch (error) {
+    console.error('Erreur Firestore :', error);
+  }
+  
 };
 
 module.exports = {
   getAllPoubelles,
   addPoubelle,
   updatePoubelle,
-  deletePoubelle
+  deletePoubelle,
+  updatePleinePoubelle,
 };

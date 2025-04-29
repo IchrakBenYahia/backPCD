@@ -29,8 +29,8 @@ router.get('/sites/search', async (req, res) => {
 // POST ajouter un site
 router.post('/sites', async (req, res) => {
   try {
-    const { codeP, nbPoubelles, nom } = req.body;
-    await siteService.addSite(codeP, nbPoubelles, nom);
+    const { codeP, nbPoubelles, nom, chauffeurID} = req.body;
+    await siteService.addSite(codeP, nbPoubelles, nom, chauffeurID);
     res.status(201).send("Site ajouté");
   } catch (error) {
     res.status(500).send(error.message);
@@ -40,8 +40,8 @@ router.post('/sites', async (req, res) => {
 // PUT mise à jour
 router.put('/sites/:id', async (req, res) => {
   try {
-    const { codeP, nbPoubelles, nom } = req.body;
-    await siteService.updateSite(req.params.id, codeP, nbPoubelles, nom);
+    const { codeP, nbPoubelles, nom, chauffeurID } = req.body;
+    await siteService.updateSite(req.params.id, codeP, nbPoubelles, nom, chauffeurID);
     res.send("Site mis à jour");
   } catch (error) {
     res.status(500).send(error.message);
@@ -58,4 +58,25 @@ router.delete('/sites/:id', async (req, res) => {
   }
 });
 
+// récupérer un user par chauffeurID
+router.get('/sites/chauffeur/:chauffeurID', async (req, res) => {
+  try {
+    const chauffeurID = req.params.chauffeurID;
+    const chauffeur = await siteService.getUserByChauffeurID(chauffeurID);
+    res.json(chauffeur);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+// Récupérer la liste des utilisateurs
+router.get('/sites/users/:role', async (req, res) => {
+  try {
+    const role = req.params.role;
+    const users = await siteService.getUsers(role);
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 module.exports = router;

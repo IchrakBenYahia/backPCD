@@ -14,6 +14,9 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
+// ✨ Maintenant SEULEMENT on peut démarrer l'émulateur
+require('./emulateur');
+
 // 🌍 Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,17 +26,20 @@ const poubelleRoutes = require('./routes/poubelleRoutes');
 const userRoutes = require('./routes/userRoutes');
 const siteRoutes = require('./routes/siteRoutes');
 const statRoutes = require('./routes/statRoutes');
+const alerteRoutes = require('./routes/alerteRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // 🛣️ Utilisation des routes
-app.use('/poubelles', poubelleRoutes); // ex: GET /poubelles, POST /poubelles
-app.use('/api/poubelle', poubelleRoutes); // pour route spéciale
-app.use('/users', userRoutes); // pour route spéciale
-app.use('/api/user', userRoutes); // pour route spéciale
-app.use('/sites', siteRoutes); // pour route spéciale
-app.use('/api/site', siteRoutes); // pour route spéciale
+app.use('/poubelles', poubelleRoutes);
+app.use('/api/poubelle', poubelleRoutes);
+app.use('/users', userRoutes);
+app.use('/api/user', userRoutes);
+app.use('/sites', siteRoutes);
+app.use('/api/site', siteRoutes);
 app.use('/stats', statRoutes);
 app.use('/api/stat', statRoutes);
+app.use('/alertes', alerteRoutes);
+app.use('/api/alerte', alerteRoutes);
 app.use('/api/auth', authRoutes);
 
 // 🚀 Démarrage du serveur

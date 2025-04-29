@@ -10,6 +10,7 @@ const getSites = async () => {
       codeP: doc.data().codeP,
       nbPoubelles: doc.data().nbPoubelles,
       nom: doc.data().nom,
+      chauffeurID: doc.data().chauffeurID,
     }));
     return sites;
   } catch (error) {
@@ -26,6 +27,7 @@ const searchSitePartial = async ({ codeP, nom }) => {
       codeP: doc.data().codeP,
       nom: doc.data().nom,
       nbPoubelles: doc.data().nbPoubelles,
+      chauffeurID: doc.data().chauffeurID,
     }));
 
     // Filtrage local
@@ -46,12 +48,13 @@ const searchSitePartial = async ({ codeP, nom }) => {
 };
 
 // Ajouter un site
-const addSite = async (codeP, nbPoubelles, nom) => {
+const addSite = async (codeP, nbPoubelles, nom, chauffeurID) => {
   try {
     await db.collection('sites').add({
       codeP: codeP,
       nbPoubelles: nbPoubelles,
       nom: nom,
+      chauffeurID: chauffeurID,
     });
   } catch (error) {
     throw new Error(`Erreur lors de l'ajout du site: ${error.message}`);
@@ -59,12 +62,13 @@ const addSite = async (codeP, nbPoubelles, nom) => {
 };
 
 // Mettre à jour un site
-const updateSite = async (id, codeP, nbPoubelles, nom) => {
+const updateSite = async (id, codeP, nbPoubelles, nom, chauffeurID) => {
   try {
     await db.collection('sites').doc(id).update({
       codeP: codeP,
       nbPoubelles: nbPoubelles,
       nom: nom,
+      chauffeurID: chauffeurID,
     });
   } catch (error) {
     throw new Error(`Erreur lors de la mise à jour du site: ${error.message}`);
@@ -80,4 +84,34 @@ const deleteSite = async (id) => {
   }
 };
 
-module.exports = { getSites, searchSitePartial, addSite, updateSite, deleteSite };
+// Récupérer un utilisateur par chauffeurID
+const getUserByChauffeurID = async (chauffeurID) => {
+  try {
+    const userDoc = await db.collection('users').doc(chauffeurID).get();
+    if (!userDoc.exists) {
+      throw new Error('Utilisateur non trouvé');
+    }
+    return {
+      id: userDoc.id,
+      ...userDoc.data(),
+    };
+  } catch (error) {
+    throw new Error(`Erreur lors de la récupération de l'utilisateur: ${error.message}`);
+  }
+};
+
+const getUsers = async (role) => {
+  try {
+    const userDoc = await db.collection('users').where('role', '==', role).get();
+    const users = userDoc.docs.map(doc => ({
+      id: doc.id,
+      email: doc.data().email,
+      role: doc.data().role,
+    }));
+    return users;
+  } catch (error) {
+    throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
+  }
+};
+
+module.exports = { getSites, searchSitePartial, addSite, updateSite, deleteSite, getUserByChauffeurID, getUsers };
