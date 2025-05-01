@@ -7,7 +7,9 @@ const getUsers = async () => {
     const snapshot = await db.collection('users').get();
     const users = snapshot.docs.map(doc => ({
       id: doc.id,
-      email: doc.data().email,
+      cin: doc.data().cin,
+      nom: doc.data().nom,
+      prenom: doc.data().prenom,
       role: doc.data().role,
     }));
     // Filtrage des administrateurs dans le code
@@ -18,21 +20,23 @@ const getUsers = async () => {
   }
 };
 
-// Recherche partielle par email et rôle
-const searchUsersPartial = async ({ email, role }) => {
+// Recherche partielle par cin et rôle
+const searchUsersPartial = async ({ prenom, role }) => {
   try {
     let query = db.collection('users');
-    if (email) {
+    if (prenom) {
       query = query
-        .orderBy('email')
-        .startAt(email)
-        .endAt(`${email}\uf8ff`);
+        .orderBy('prenom')
+        .startAt(prenom)
+        .endAt(`${prenom}\uf8ff`);
     }
 
     const snapshot = await query.get();
     let users = snapshot.docs.map(doc => ({
       id: doc.id,
-      email: doc.data().email,
+      cin: doc.data().cin,
+      nom: doc.data().nom,
+      prenom: doc.data().prenom,
       role: doc.data().role,
     }));
 
@@ -48,10 +52,12 @@ const searchUsersPartial = async ({ email, role }) => {
 };
 
 // Ajouter un utilisateur
-const addUser = async (email, role) => {
+const addUser = async (cin, role, nom, prenom) => {
   try {
     await db.collection('users').add({
-      email: email,
+      cin: cin,
+      nom: nom,
+      prenom: prenom,
       role: role,
     });
   } catch (error) {
@@ -60,10 +66,12 @@ const addUser = async (email, role) => {
 };
 
 // Mettre à jour un utilisateur
-const updateUser = async (id, email, role) => {
+const updateUser = async (id, cin, role, nom, prenom) => {
   try {
     await db.collection('users').doc(id).update({
-      email: email,
+      cin: cin,
+      nom: nom,
+      prenom: prenom,
       role: role,
     });
   } catch (error) {
@@ -80,4 +88,22 @@ const deleteUser = async (id) => {
   }
 };
 
-module.exports = { getUsers, searchUsersPartial, addUser, updateUser, deleteUser };
+// Récupérer la liste des chauffeurs affectés
+const getChauffeurAffected = async () => {
+  try {
+    const snapshot = await db.collection('sites').get();
+    const secteurs = snapshot.docs.map(doc => ({
+      id: doc.id,
+      chauffeurID: doc.data().chauffeurID,
+      //nom: doc.data().nom,
+      //codeP: doc.data().codeP,
+      //nbPoubelles: doc.data().nbPoubelles,
+    }));
+
+    return secteurs;
+  } catch (error) {
+    throw new Error(`Erreur lors de la récupération des utilisateurs: ${error.message}`);
+  }
+};
+
+module.exports = { getUsers, searchUsersPartial, addUser, updateUser, deleteUser, getChauffeurAffected };

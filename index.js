@@ -15,9 +15,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-// ✨ Maintenant SEULEMENT on peut démarrer l'émulateur
-require('./emulateur');
-
 // 🌍 Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,7 +22,7 @@ app.use(bodyParser.json());
 // 📦 Import des routes
 const poubelleRoutes = require('./routes/poubelleRoutes');
 const userRoutes = require('./routes/userRoutes');
-const siteRoutes = require('./routes/siteRoutes');
+const secteurRoutes = require('./routes/siteRoutes');
 const statRoutes = require('./routes/statRoutes');
 const alerteRoutes = require('./routes/alerteRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -36,8 +33,8 @@ app.use('/poubelles', poubelleRoutes);
 app.use('/api/poubelle', poubelleRoutes);
 app.use('/users', userRoutes);
 app.use('/api/user', userRoutes);
-app.use('/sites', siteRoutes);
-app.use('/api/site', siteRoutes);
+app.use('/secteurs', secteurRoutes);
+app.use('/api/secteur', secteurRoutes);
 app.use('/stats', statRoutes);
 app.use('/api/stat', statRoutes);
 app.use('/alertes', alerteRoutes);

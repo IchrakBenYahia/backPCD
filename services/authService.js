@@ -6,42 +6,53 @@ const auth = admin.auth();
 const db = admin.firestore();
 
 // Créer un nouvel utilisateur
-const registerUser = async (email, password, role) => {
+const registerUser = async (cin, password, role, nom, prenom) => {
   try {
-    const userRecord = await auth.createUser({ email, password });
+    const email = `${cin}@cin.com`;
+
+    const userRecord = await auth.createUser({
+      email,
+      password,
+    });
 
     await db.collection('users').doc(userRecord.uid).set({
-      email,
+      cin,
       role,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      nom,
+      prenom,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     return {
       uid: userRecord.uid,
-      email,
-      role
+      cin,
+      role,
+      nom,
+      prenom,
     };
   } catch (error) {
     throw new Error(`Erreur de création: ${error.message}`);
   }
 };
 
-// Connexion utilisateur (via email)
-const loginUser = async (email, password) => {
+
+// Connexion utilisateur (via cin)
+const loginUser = async (cin, password) => {
     try {
       const apiKey = process.env.FIREBASE_API_KEY;
-  
+      console.log('********');
       const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
         {
-          email,
+          email: `${cin}@cin.com`,
           password,
           returnSecureToken: true,
         }
-      );
+      );      
   
       const uid = response.data.localId;
-  
+      console.log('********');
+      console.log(uid);
       const userDoc = await db.collection('users').doc(uid).get();
       if (!userDoc.exists) {
         throw new Error("Utilisateur non trouvé");
@@ -51,7 +62,7 @@ const loginUser = async (email, password) => {
       return {
         uid,
         role: userData.role,
-        email: userData.email,
+        cin: userData.cin,
       };
     } catch (error) {
       throw new Error("Identifiants invalides");
@@ -84,8 +95,8 @@ const getCurrentUser = async (idToken) => {
 
     return {
       uid: userRecord.uid,
-      email: userRecord.email,
-      emailVerified: userRecord.emailVerified
+      cin: userRecord.cin,
+      cinVerified: userRecord.cinVerified
     };
   } catch (error) {
     throw new Error("Token invalide");

@@ -9,9 +9,9 @@ const {
 
 // Enregistrement
 router.post('/register', async (req, res) => {
-  const { email, password, role } = req.body;
+  const { cin, password, role, nom, prenom } = req.body;
   try {
-    const result = await registerUser(email, password, role);
+    const result = await registerUser(cin, password, role, nom, prenom);
     res.status(201).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -20,9 +20,9 @@ router.post('/register', async (req, res) => {
 
 // Connexion
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { cin, password } = req.body;
   try {
-    const result = await loginUser(email, password);
+    const result = await loginUser(cin, password);
     res.status(200).json(result);
   } catch (error) {
     res.status(401).json({ error: error.message });

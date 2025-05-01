@@ -33,7 +33,7 @@ const getUserCountsByRoles = async () => {
   }
 };
 
-// ➤ Total des poubelles dans tous les sites
+// ➤ Total des poubelles dans tous les secteurs
 const getTotalPoubelles = async () => {
   try {
     const snapshot = await db.collection('sites').get();
