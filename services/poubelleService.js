@@ -80,13 +80,19 @@ const updatePleinePoubelle = async (id, pleine) => {
   
 };
 
-async function getPoubellesPleines() {
-  const snapshot = await db.collection('poubelles').where('pleine', '==', true).get();
- 
-  if (snapshot.empty) {
+async function getPoubellesPleines(secteurs) {
+  if (!Array.isArray(secteurs) || secteurs.length === 0) {
     return [];
   }
 
+  const snapshot = await db.collection('poubelles')
+    .where('pleine', '==', true)
+    .where('secteur', 'in', secteurs)
+    .get();
+
+  if (snapshot.empty) {
+    return [];
+  }
 
   const poubelles = [];
   snapshot.forEach(doc => {
@@ -95,12 +101,13 @@ async function getPoubellesPleines() {
       adresse: doc.data().adresse,
       longitude: doc.data().longitude,
       latitude: doc.data().latitude,
+      secteur: doc.data().secteur
     });
   });
 
-
   return poubelles;
 }
+
 
 
 module.exports = {

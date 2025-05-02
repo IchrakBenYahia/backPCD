@@ -116,4 +116,27 @@ const getUsers = async (role) => {
   }
 };
 
-module.exports = { getSecteurs, searchSecteurPartial, addSecteur, updateSecteur, deleteSecteur, getUserByChauffeurID, getUsers };
+const getSecteursByChauffeurID = async (chauffeurID) => {
+  try {
+    const snapshot = await db.collection('sites').where('chauffeurID', '==', chauffeurID).get();
+
+    if (snapshot.empty) {
+      return []; // Aucun secteur trouvé
+    }
+
+    // Retourner tous les secteurs trouvés
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      codeP: doc.data().codeP,
+      nom: doc.data().nom,
+      nbPoubelles: doc.data().nbPoubelles,
+      chauffeurID: doc.data().chauffeurID,
+    }));
+  } catch (error) {
+    throw new Error(`Erreur lors de la récupération des secteurs: ${error.message}`);
+  }
+};
+
+
+
+module.exports = { getSecteurs, searchSecteurPartial, addSecteur, updateSecteur, deleteSecteur, getUserByChauffeurID, getUsers,getSecteursByChauffeurID };

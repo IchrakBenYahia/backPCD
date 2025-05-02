@@ -79,4 +79,22 @@ router.get('/secteurs/users/:role', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Récupérer le secteur (site) affecté à un chauffeur donné
+router.get('/secteurs/affectation/:chauffeurID', async (req, res) => {
+  try {
+    const chauffeurID = req.params.chauffeurID;
+    const secteurs = await secteurService.getSecteursByChauffeurID(chauffeurID);
+
+    if (!secteurs || secteurs.length === 0) {
+      return res.status(404).json({ message: 'Aucun secteur trouvé pour ce chauffeur' });
+    }
+
+    res.json(secteurs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 module.exports = router;
