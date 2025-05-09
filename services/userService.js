@@ -53,7 +53,8 @@ const searchUsersPartial = async ({ prenom, role }) => {
 
 const addUser = async (cin, role, nom, prenom, email, password) => {
   try {
-    // 1. Créer l'utilisateur dans Firebase Auth
+    // 1. Créer l'utilisateur dans Firebase Auth 
+    const email = `${cin}@cin.com`;
     const userRecord = await admin.auth().createUser({
       email: email,
       password: password,
