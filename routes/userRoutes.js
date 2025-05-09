@@ -25,9 +25,9 @@ router.get('/users/search', async (req, res) => {
 
 // Ajouter un utilisateur
 router.post('/users', async (req, res) => {
-  const { cin, role, nom, prenom } = req.body;
+  const { cin, role, nom, prenom, password } = req.body;
   try {
-    await addUser(cin, role, nom, prenom);
+    await addUser(cin, role, nom, prenom, password);
     res.status(201).json({ message: 'Utilisateur ajouté avec succès' });
   } catch (error) {
     res.status(500).json({ message: error.message });

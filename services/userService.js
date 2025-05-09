@@ -52,13 +52,14 @@ const searchUsersPartial = async ({ prenom, role }) => {
 };
 
 // Ajouter un utilisateur
-const addUser = async (cin, role, nom, prenom) => {
+const addUser = async (cin, role, nom, prenom, password) => {
   try {
     await db.collection('users').add({
       cin: cin,
       nom: nom,
       prenom: prenom,
       role: role,
+      password: password,
     });
   } catch (error) {
     throw new Error(`Erreur lors de l'ajout de l'utilisateur: ${error.message}`);
