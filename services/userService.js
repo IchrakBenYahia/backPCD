@@ -51,27 +51,23 @@ const searchUsersPartial = async ({ prenom, role }) => {
   }
 };
 
-const addUser = async (cin, role, nom, prenom, email, password) => {
+const addUser = async (cin, role, nom, prenom, password) => {
   try {
-    // 1. Créer l'utilisateur dans Firebase Auth 
     const email = `${cin}@cin.com`;
-    const userRecord = await admin.auth().createUser({
-      email: email,
-      password: password,
-      displayName: `${prenom} ${nom}`,
-    });
-    console.log("*****************************");
-    console.log(userRecord);
 
-    // 2. Ajouter les infos dans Firestore
+    const userRecord = await auth.createUser({
+      email,
+      password,
+    });
+
     await db.collection('users').doc(userRecord.uid).set({
-      cin: cin,
-      nom: nom,
-      prenom: prenom,
-      role: role,
+      cin,
+      role,
+      nom,
+      prenom,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    return { uid: userRecord.uid };
   } catch (error) {
     throw new Error(`Erreur lors de l'ajout de l'utilisateur: ${error.message}`);
   }
