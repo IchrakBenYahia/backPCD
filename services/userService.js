@@ -75,6 +75,7 @@ const addUser = async (cin, role, nom, prenom, email, password) => {
   }
 };
 
+
 // Mettre à jour un utilisateur
 const updateUser = async (id, cin, role, nom, prenom) => {
   try {
